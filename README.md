@@ -1,2 +1,2 @@
 # ems
-Employee Management System full-stack application using Spring Boot and ReactJS.
+Full-stack application for Employee Management System (EMS) using Spring Boot and ReactJS.
