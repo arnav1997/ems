@@ -6,7 +6,11 @@ const HeaderComponent = () => {
     <div>
       <header>
         <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-          <a className="navbar-brand" href="/employees">
+          <a
+            className="navbar-brand"
+            style={{ marginLeft: "25px" }}
+            href="/employees"
+          >
             Employee Management System
           </a>
           <div className="collapse navbar-collapse" id="navbarNav">

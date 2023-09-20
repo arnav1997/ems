@@ -76,13 +76,20 @@ const ListEmployeeComponent = () => {
   return (
     <div className="container">
       <h2 className="text-center">Employees</h2>
-      <button type="button" className="btn btn-primary" onClick={addNewEmployee}>Add Employee</button>
+      <button
+        type="button"
+        className="btn btn-primary"
+        onClick={addNewEmployee}
+      >
+        Add Employee
+      </button>
       <table className="table table-striped table-bordered">
         <thead>
           <th>Employee ID</th>
           <th>Employee First Name</th>
           <th>Employee Last Name</th>
           <th>Employee Email</th>
+          <th>Department ID</th>
           <th>Actions</th>
         </thead>
         <tbody>
@@ -92,9 +99,21 @@ const ListEmployeeComponent = () => {
               <td>{employee.firstName}</td>
               <td>{employee.lastName}</td>
               <td>{employee.email}</td>
+              <td>{employee.deptId}</td>
               <td>
-                <button className='btn btn-info' onClick={() => updateEmployee(employee.id)}>Update</button>
-                <button style={{marginLeft: '10px'}} className='btn btn-danger' onClick={() => deleteEmployee(employee.id)}>Delete</button>
+                <button
+                  className="btn btn-info"
+                  onClick={() => updateEmployee(employee.id)}
+                >
+                  Update
+                </button>
+                <button
+                  style={{ marginLeft: "10px" }}
+                  className="btn btn-danger"
+                  onClick={() => deleteEmployee(employee.id)}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
