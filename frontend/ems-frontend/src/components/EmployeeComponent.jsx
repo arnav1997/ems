@@ -1,30 +1,52 @@
 import React, { useEffect, useState } from 'react'
 import { createEmployee, getEmployeeById, updateEmployeeById } from '../services/EmployeeService';
 import { useNavigate, useParams } from 'react-router-dom';
+import { listDepartments } from "../services/DepartmentService";
 
 const EmployeeComponent = () => {
-
-  const [firstName, setFirstName] = useState('');
+  const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const navigator = useNavigate();
-  const [errors, setErrors] = useState({firstName: "", lastName: "", email: ""});
-  const {id} = useParams();
+  const [errors, setErrors] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    deptId: "",
+  });
+  const { id } = useParams();
+  const [deptId, setDeptId] = useState("");
+  const [departments, setDepartments] = useState([]);
+
+  useEffect(() => {
+    listDepartments()
+      .then((response) => {
+        setDepartments(response.data);
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
   useEffect(() => {
     if (id) {
-      getEmployeeById(id).then(response => {
-        setFirstName(response.data.firstName);
-        setLastName(response.data.lastName);
-        setEmail(response.data.email);
-      }).catch(error => {
-        console.error(error);
-      })
+      getEmployeeById(id)
+        .then((response) => {
+          setFirstName(response.data.firstName);
+          setLastName(response.data.lastName);
+          setEmail(response.data.email);
+          setDeptId(response.data.deptId);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
-  }, [id])
+  }, [id]);
 
   const validateForm = () => {
-    let valid = true
-    const errorsCopy = {... errors}
+    let valid = true;
+    const errorsCopy = { ...errors };
 
     if (firstName.trim()) {
       errorsCopy.firstName = "";
@@ -47,17 +69,25 @@ const EmployeeComponent = () => {
       errorsCopy.email = "Email ID can't be blank!";
     }
 
+    if (deptId) {
+      errorsCopy.deptId = "";
+    } else {
+      valid = false;
+      errorsCopy.deptId = "Department can't be blank!";
+    }
+
     setErrors(errorsCopy);
     return valid;
-  }
+  };
 
   const saveEmployee = (e) => {
     e.preventDefault();
 
-    const employee = {firstName, lastName, email};
+    const employee = { firstName, lastName, email, deptId };
     console.log(employee);
+    console.log(employee.deptId);
 
-    if(validateForm()) {
+    if (validateForm()) {
       if (id) {
         updateEmployeeById(id, employee)
           .then((response) => {
@@ -70,25 +100,25 @@ const EmployeeComponent = () => {
           });
       } else {
         createEmployee(employee)
-        .then(response => {
-          console.log(response);
-          navigator('/employees')
-        })
-        .catch(error => {
-          console.log(error);
-          alert("Error!")
-        });
+          .then((response) => {
+            console.log(response);
+            navigator("/employees");
+          })
+          .catch((error) => {
+            console.log(error);
+            alert("Error!");
+          });
       }
     }
-  }
+  };
 
   const pageTitle = () => {
     if (id) {
-      return <h2 className="text-center">Update Employee</h2>
+      return <h2 className="text-center">Update Employee</h2>;
     } else {
-      return <h2 className="text-center">Add Employee</h2>
+      return <h2 className="text-center">Add Employee</h2>;
     }
-  }
+  };
 
   return (
     <div className="container">
@@ -144,6 +174,26 @@ const EmployeeComponent = () => {
                   <div className="invalid-feedback"> {errors.email} </div>
                 )}
               </div>
+              <div className="form-group mb-2">
+                <label className="form-label">Select Department:</label>
+                <select
+                  className={`form-control ${
+                    errors.deptId ? "is-invalid" : ""
+                  }`}
+                  value={deptId}
+                  onChange={(e) => setDeptId(e.target.value)}
+                >
+                  <option value="Select Department">Select Department</option>
+                  {departments.map((department) => (
+                    <option key={department.id} value={department.id}>
+                      {department.deptName}
+                    </option>
+                  ))}
+                </select>
+                {errors.deptId && (
+                  <div className="invalid-feedback"> {errors.deptId} </div>
+                )}
+              </div>
               <div className="text-center">
                 <button className="btn btn-success" onClick={saveEmployee}>
                   Submit
@@ -155,6 +205,6 @@ const EmployeeComponent = () => {
       </div>
     </div>
   );
-}
+};
 
 export default EmployeeComponent
